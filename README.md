@@ -7,7 +7,8 @@ An intelligent AI application that **detects and counts Pakistani currency notes
 ## ✨ Features
 
 ✅ Detects Pakistani currency notes:
-- Rs. 10, 20, 50, 100, 500, 1000, 5000  
+- Rs. 10, 20, 50, 100, 500, 1000, 5000
+
 ✅ Upload image and get instant results  
 ✅ Beautiful and clean web interface (Gradio)  
 ✅ Displays note count in a structured table  
@@ -57,7 +58,7 @@ pip install -r requirements.txt
 
 Download the trained model.
 
-### Run the App
+### 4️⃣ Run the App
 ```bash
 python app.py
 ```
