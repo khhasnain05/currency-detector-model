@@ -25,8 +25,8 @@ class CurrencyCNN(torch.nn.Module):
         return self.model(x)
 
 # Loading Trained Model
-model = CurrencyCNN(num_classes=7)  # Change to actual number of classes
-model.load_state_dict(torch.load("D:/AI/currency_detector.pth", map_location=torch.device('cpu')))
+model = CurrencyCNN(num_classes=7)
+model.load_state_dict(torch.load("D:/AI/currency_detector.pth", map_location=torch.device('cpu'))) # Adjust path according to your own
 model.eval()
 
 # Class Names
