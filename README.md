@@ -69,7 +69,7 @@ Your browser will automatically open the Gradio interface.
 
 ## 📸 Example Output
 
-![demo](https://github.com/user-attachments/assets/7a87c401-ecd0-4c4e-b094-de0396999782)
+![demo](https://github.com/user-attachments/assets/33e6e9e3-9f41-42b9-b447-8772fa7749d7)
 
 ---
 
