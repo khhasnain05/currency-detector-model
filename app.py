@@ -2,9 +2,8 @@ import gradio as gr
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
-import os
 
-# Defining Model Architecture
+# Model Definition
 class CurrencyCNN(torch.nn.Module):
     def __init__(self, num_classes):
         super(CurrencyCNN, self).__init__()
@@ -24,24 +23,23 @@ class CurrencyCNN(torch.nn.Module):
     def forward(self, x):
         return self.model(x)
 
-# Loading Trained Model
+# Load model
 model = CurrencyCNN(num_classes=7)
 model.load_state_dict(torch.load("D:/AI/currency_detector.pth", map_location=torch.device('cpu'))) # Adjust path according to your own
 model.eval()
 
-# Class Names
-class_names = ['10', '100', '1000', '20', '50', '500', '5000']  
+# Class labels
+class_names = ['10', '100', '1000', '20', '50', '500', '5000']
 
-# Images Transformation
+# Image transform
 transform = transforms.Compose([
     transforms.Resize((128, 128)),
     transforms.ToTensor()
 ])
 
-# Prediction Function
+# Prediction function
 def predict_notes(images):
     counts = {name: 0 for name in class_names}
-    
     for img_path in images:
         image = Image.open(img_path).convert("RGB")
         img_tensor = transform(image).unsqueeze(0)
@@ -75,24 +73,67 @@ def predict_notes(images):
         </tbody>
     </table>
     """
-    return html_table
 
-# Gradio Interface
-iface = gr.Interface(
-    fn=predict_notes,
-    inputs=gr.File(type="filepath", label="Upload Note Images", file_types=[".png", ".jpg", ".jpeg"], file_count = "multiple"),
-    outputs=gr.HTML(label="💰 Prediction Table"),
-    title="""
+    return [images, html_table]
+
+# Gradio UI Layout
+with gr.Blocks() as app:
+    # Title and Description
+    gr.Markdown("""
     <center><p style='font-size:35px; font-family:Times New Roman; font-weight:bold; color:#1a1a1a;'>💸 Currency Note Detector</p></center>
-    """,
-    description="""
     <center>
         <p style='font-size:16px; font-family:Verdana; color:#333;'>
         Upload clear images of Pakistani currency notes.<br>
         This AI model will detect, count, and calculate the total amount.
         </p>
     </center>
-    """
-)
+    """)
 
-iface.launch()
+    # Custom CSS for Detect Button
+    gr.HTML("""
+    <style>
+    #detect-button {
+        background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
+        color: #fff;
+        font-weight: bold;
+        font-size: 18px;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        transition: all 0.3s ease-in-out;
+        width: 250px;
+        margin: 10px auto;
+        display: block;
+    }
+    #detect-button:hover {
+        transform: scale(1.05);
+        cursor: pointer;
+        background: linear-gradient(90deg, #36d1dc 0%, #5b86e5 100%);
+    }
+    </style>
+    """)
+
+    # Upload Box
+    with gr.Row():
+        image_input = gr.File(
+            type="filepath",
+            label="📤 Upload Note Images",
+            file_types=[".png", ".jpg", ".jpeg"],
+            file_count="multiple"
+        )
+
+    # Detect Button
+    with gr.Row():
+        detect_btn = gr.Button("🔍 Detect Currency Notes", elem_id="detect-button")
+
+    # Output Section: Gallery + Table Side by Side
+    with gr.Row():
+        gallery_output = gr.Gallery(label="📷 Uploaded Images")
+        table_output = gr.HTML(label="💰 Prediction Table")
+
+    # Connect button to function
+    detect_btn.click(fn=predict_notes, inputs=image_input, outputs=[gallery_output, table_output])
+
+# Launch App
+app.launch()
